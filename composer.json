@@ -1,6 +1,7 @@
 {
     "name": "pavelmaksimov25/auto_merge_test_dep",
     "type": "library",
+    "description": "Test package for auto merge",
     "require": {
         "php": "^8.2"
     },
