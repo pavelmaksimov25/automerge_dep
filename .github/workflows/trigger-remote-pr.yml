@@ -51,10 +51,6 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git checkout -b pavelmaksimov25/auto_merge_test_main/${{ env.prBranchName }}
-          git add .
-          git commit -m "Update dependencies"
-          git push origin pavelmaksimov25/auto_merge_test_main/${{ env.prBranchName }}
         working-directory: main
         env:
             prNumber: ${{ steps.PR.outputs.number }}
