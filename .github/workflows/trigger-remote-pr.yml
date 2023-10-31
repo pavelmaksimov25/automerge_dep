@@ -56,6 +56,9 @@ jobs:
           git commit -m "Update dependencies"
           git push origin pavelmaksimov25/auto_merge_test_main/${{ env.prBranchName }}
         working-directory: main
+        env:
+            prNumber: ${{ steps.PR.outputs.number }}
+            prBranchName: ${{ fromJson(steps.PR.outputs.pr).head.ref }}
 
       - name: Create Pull Request
         id: cpr
