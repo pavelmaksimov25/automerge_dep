@@ -1,0 +1,61 @@
+name: Dependency updated
+
+env:
+  AUTH_TOKEN: ${{ secrets.PAT }}
+  ORG: pavelmaksimov25
+  REPO: auto_merge_test_main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger-external-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+            fetch-depth: 0
+
+      - uses: 8BitJonny/gh-get-current-pr@2.0.0
+        id: PR
+        with:
+            github-token: ${{ secrets.PAT }}
+            sha: ${{ github.event.pull_request.head.sha }}
+
+      - name: Get PR details
+        run: echo "The PR number is ${prNumber}"
+        if: success() && steps.PR.outputs.number
+        env:
+          prNumber: ${{ steps.PR.outputs.number }}
+
+      - name: "Checkout target repository"
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ${ORG}/${REPO}
+          path: main
+          fetch-depth: 0
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.PAT }}
+          path: main
+          branch: ${ORG}/${REPO}/${{ env.prBranchName }}
+          delete-branch: true
+          title: ${{ steps.PR.outputs.title }}
+          body: ${{ steps.PR.outputs.pr_body }}
+          labels: dependencies
+        env:
+          prNumber: ${{ steps.PR.outputs.number }}
+          prBranchName: ${{ fromJson(steps.PR.outputs.pr).head.ref }}
+
+      - name: Check outputs
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
