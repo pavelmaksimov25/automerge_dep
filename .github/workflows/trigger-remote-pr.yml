@@ -47,15 +47,6 @@ jobs:
           composer dump-autoload
         working-directory: main
 
-      - name: Commit changes
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        working-directory: main
-        env:
-            prNumber: ${{ steps.PR.outputs.number }}
-            prBranchName: ${{ fromJson(steps.PR.outputs.pr).head.ref }}
-
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v4
