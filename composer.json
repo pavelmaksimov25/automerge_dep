@@ -1,0 +1,14 @@
+{
+    "name": "pavelmaksimov25/auto_merge_test_dep",
+    "type": "library",
+    "require": {
+        "php": "^8.2"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Pavelmaksimov25\\AutoMergeTestDep\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
