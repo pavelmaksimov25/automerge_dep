@@ -1,10 +1,5 @@
 name: Dependency updated
 
-env:
-  AUTH_TOKEN: ${{ secrets.PAT }}
-  ORG: pavelmaksimov25
-  REPO: auto_merge_test_main
-
 on:
   push:
     branches:
@@ -35,7 +30,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
-          repository: ${ORG}/${REPO}
+          repository: pavelmaksimov25/auto_merge_test_main
           path: main
           fetch-depth: 0
 
@@ -50,10 +45,10 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git checkout -b ${ORG}/${REPO}/${{ env.prBranchName }}
+          git checkout -b pavelmaksimov25/auto_merge_test_main/${{ env.prBranchName }}
           git add .
           git commit -m "Update dependencies"
-          git push origin ${ORG}/${REPO}/${{ env.prBranchName }}
+          git push origin pavelmaksimov25/auto_merge_test_main/${{ env.prBranchName }}
         working-directory: main
 
       - name: Create Pull Request
@@ -62,7 +57,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           path: main
-          branch: ${ORG}/${REPO}/${{ env.prBranchName }}
+          branch: pavelmaksimov25/auto_merge_test_main/${{ env.prBranchName }}
           delete-branch: true
           title: ${{ steps.PR.outputs.title }}
           body: ${{ steps.PR.outputs.pr_body }}
