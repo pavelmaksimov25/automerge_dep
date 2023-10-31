@@ -55,7 +55,7 @@ jobs:
           path: main
           branch: pavelmaksimov25/auto_merge_test_main/${{ env.prBranchName }}
           delete-branch: true
-          title: ${{ steps.PR.outputs.title }}
+          title: "Updated dependencies"
           body: ${{ steps.PR.outputs.pr_body }}
           labels: dependencies
         env:
