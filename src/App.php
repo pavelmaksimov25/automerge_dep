@@ -5,6 +5,6 @@ class App
 {
     public function run(): void
     {
-        echo 'Auto merge it!';
+        echo 'Auto merge it now!';
     }
 }
