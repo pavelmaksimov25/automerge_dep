@@ -39,6 +39,23 @@ jobs:
           path: main
           fetch-depth: 0
 
+      - name: "Update composer"
+        run: |
+          composer update
+          composer install
+          composer dump-autoload
+        working-directory: main
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout -b ${ORG}/${REPO}/${{ env.prBranchName }}
+          git add .
+          git commit -m "Update dependencies"
+          git push origin ${ORG}/${REPO}/${{ env.prBranchName }}
+        working-directory: main
+
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v4
