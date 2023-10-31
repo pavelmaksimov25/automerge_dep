@@ -1,10 +1,5 @@
 name: Dependency updated
 
-env:
-  AUTH_TOKEN: ${{ secrets.PAT }}
-  ORG:
-  REPO: auto_merge_test_main
-
 on:
   push:
     branches:
