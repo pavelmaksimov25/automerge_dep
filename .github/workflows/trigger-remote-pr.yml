@@ -21,7 +21,7 @@ jobs:
       - name: "Setup PHP"
         uses: shivammathur/setup-php@v2
         with:
-            php-version: $PHP_VERSION
+            php-version: "$PHP_VERSION"
             tools: composer:v2
 
       - uses: 8BitJonny/gh-get-current-pr@2.0.0
