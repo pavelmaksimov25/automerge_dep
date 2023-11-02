@@ -56,7 +56,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           path: main
-          branch: ${{ format('{0}/{1}', env.targetRepository, env.prBranchName) }}
+          branch: ${{ format('{0}-deps-{1}', env.prBranchName, env.prNumber) }}
           delete-branch: true
           title: ${{ format('Dependency update. {0}', env.prTitle) }}
           body: ${{ format('{0} Dependency PR [{1}]({2}).', env.prBody, env.prNumber, env.prUrl) }}
@@ -67,7 +67,6 @@ jobs:
           prTitle: ${{ steps.PR.outputs.pr_title }}
           prBranchName: ${{ fromJson(steps.PR.outputs.pr).head.ref }}
           prBody: ${{ steps.PR.outputs.pr_body }}
-          targetRepository: ${{ env.REPOSITORY_PATH }}
 
 
       - name: "Check outputs"
