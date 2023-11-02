@@ -11,9 +11,10 @@ jobs:
     env:
         REPOSITORY_PATH: 'pavelmaksimov25/auto_merge_test_main'
         PHP_VERSION: '8.2'
+
     steps:
       - name: Echo env vars
-        run: echo "Repository path is " $REPOSITORY_PATH
+        run: echo "Repository path is $REPOSITORY_PATH"
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -59,7 +60,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           path: main
-          branch: ${{ env.repositoryPath }}/${{ env.prBranchName }}
+          branch: "$REPOSITORY_PATH/"${{ env.prBranchName }}
           delete-branch: true
           title: ${{ format('Dependency update. {0}', env.prTitle) }}
           body: ${{ format('{0} Dependency PR [{1}]({2}).', env.prBody, env.prNumber, env.prUrl) }}
@@ -70,7 +71,6 @@ jobs:
           prTitle: ${{ steps.PR.outputs.pr_title }}
           prBranchName: ${{ fromJson(steps.PR.outputs.pr).head.ref }}
           prBody: ${{ steps.PR.outputs.pr_body }}
-          repositoryPath: $REPOSITORY_PATH
 
       - name: Check outputs
         if: ${{ steps.cpr.outputs.pull-request-number }}
