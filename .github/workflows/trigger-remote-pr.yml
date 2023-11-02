@@ -55,8 +55,8 @@ jobs:
           path: main
           branch: pavelmaksimov25/auto_merge_test_main/${{ env.prBranchName }}
           delete-branch: true
-          title: ${{ format('Dependency update. ${0}', env.prTitle) }}
-          body: ${{ format('${0} \n\n Dependency PR(${1}) ${2}.', env.prBody, env.prNumber, env.prUrl) }}
+          title: ${{ format('Dependency update. {0}', env.prTitle) }}
+          body: ${{ format('{0} Dependency PR ({1}[{2}]).', env.prBody, env.prNumber, env.prUrl) }}
           labels: dependencies
         env:
           prNumber: ${{ steps.PR.outputs.number }}
