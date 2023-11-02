@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
-          repository: $REPOSITORY_PATH
+          repository: "$REPOSITORY_PATH"
           path: main
           fetch-depth: 0
 
@@ -60,7 +60,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           path: main
-          branch: "$REPOSITORY_PATH/"${{ env.prBranchName }}
+          branch: ${{ env.prBranchName }}
           delete-branch: true
           title: ${{ format('Dependency update. {0}', env.prTitle) }}
           body: ${{ format('{0} Dependency PR [{1}]({2}).', env.prBody, env.prNumber, env.prUrl) }}
@@ -69,8 +69,9 @@ jobs:
           prNumber: ${{ steps.PR.outputs.number }}
           prUrl: ${{ steps.PR.outputs.pr_url }}
           prTitle: ${{ steps.PR.outputs.pr_title }}
-          prBranchName: ${{ fromJson(steps.PR.outputs.pr).head.ref }}
+          prBranchName: "$REPOSITORY_PATH"/${{ fromJson(steps.PR.outputs.pr).head.ref }}
           prBody: ${{ steps.PR.outputs.pr_body }}
+
 
       - name: Check outputs
         if: ${{ steps.cpr.outputs.pull-request-number }}
