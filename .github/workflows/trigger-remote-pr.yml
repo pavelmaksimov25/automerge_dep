@@ -55,14 +55,15 @@ jobs:
           path: main
           branch: pavelmaksimov25/auto_merge_test_main/${{ env.prBranchName }}
           delete-branch: true
-          title: ${{ env.prTitle }}
-          body: "$steps.PR.outputs.pr_body \n\n Dependency PR($env.prNumber) $env.prUrl."
+          title: ${{ format('Dependency update. ${0}', env.prTitle) }}
+          body: ${{ format('${0} \n\n Dependency PR(${1}) ${2}.', env.prBody, $env.prNumber, env.prUrl) }}
           labels: dependencies
         env:
           prNumber: ${{ steps.PR.outputs.number }}
           prUrl: ${{ steps.PR.outputs.pr_url }}
           prTitle: ${{ steps.PR.outputs.pr_title }}
           prBranchName: ${{ fromJson(steps.PR.outputs.pr).head.ref }}
+          prBody: ${{ steps.PR.outputs.pr_body }}
 
       - name: Check outputs
         if: ${{ steps.cpr.outputs.pull-request-number }}
