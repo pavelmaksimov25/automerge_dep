@@ -12,6 +12,9 @@ jobs:
         REPOSITORY_PATH: 'pavelmaksimov25/auto_merge_test_main'
         PHP_VERSION: '8.2'
     steps:
+      - name: Echo env vars
+        run: echo "Repository path is " $REPOSITORY_PATH
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
