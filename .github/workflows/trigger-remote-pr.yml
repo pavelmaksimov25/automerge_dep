@@ -66,7 +66,7 @@ jobs:
           prNumber: ${{ steps.PR.outputs.number }}
           prUrl: ${{ steps.PR.outputs.pr_url }}
           prTitle: ${{ steps.PR.outputs.pr_title }}
-          prBranchName: ${{ format('{0}/{1}, fromJson(steps.PR.outputs.pr).head.ref }}
+          prBranchName: ${{ fromJson(steps.PR.outputs.pr).head.ref }}
           prBody: ${{ steps.PR.outputs.pr_body }}
           targetRepository: "$REPOSITORY_PATH"
 
