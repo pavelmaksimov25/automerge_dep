@@ -13,15 +13,12 @@ jobs:
         PHP_VERSION: '8.2'
 
     steps:
-      - name: Echo env vars
-        run: echo "Repository path is $REPOSITORY_PATH"
-
-      - name: Checkout
+      - name: "Checkout"
         uses: actions/checkout@v3
         with:
             fetch-depth: 0
 
-      - name: Setup PHP
+      - name: "Setup PHP"
         uses: shivammathur/setup-php@v2
         with:
             php-version: $PHP_VERSION
@@ -33,13 +30,13 @@ jobs:
             github-token: ${{ secrets.PAT }}
             sha: ${{ github.event.pull_request.head.sha }}
 
-      - name: Get PR details
+      - name: "Get PR details"
         run: echo "The PR number is ${prNumber}"
         if: success() && steps.PR.outputs.number
         env:
           prNumber: ${{ steps.PR.outputs.number }}
 
-      - name: Checkout target repository
+      - name: "Checkout target repository"
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
@@ -47,14 +44,14 @@ jobs:
           path: main
           fetch-depth: 0
 
-      - name: Update composer
+      - name: "Update composer"
         run: |
           composer update
           composer install
           composer dump-autoload
         working-directory: main
 
-      - name: Create Pull Request
+      - name: "Create Pull Request"
         id: cpr
         uses: peter-evans/create-pull-request@v4
         with:
@@ -73,7 +70,7 @@ jobs:
           prBody: ${{ steps.PR.outputs.pr_body }}
 
 
-      - name: Check outputs
+      - name: "Check outputs"
         if: ${{ steps.cpr.outputs.pull-request-number }}
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
