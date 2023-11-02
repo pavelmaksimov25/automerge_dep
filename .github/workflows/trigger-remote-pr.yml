@@ -55,10 +55,10 @@ jobs:
         if: ${{ success() }}
         id: target-pr-body
         run: |
-            target_pr_body="This PR is automatically created by GitHub action to automatically update dependency.
-            *  Original PR [${{ steps.PR.outputs.number }}](${{ steps.PR.outputs.pr_url }})
-            *  Original PR Body:
-            *  ${{ steps.PR.outputs.pr_body }}"
+            target_pr_body="This PR is automatically created by GitHub action to update dependency.
+            Original PR [${{ steps.PR.outputs.number }}](${{ steps.PR.outputs.pr_url }})
+            Original PR Body:
+            ${{ steps.PR.outputs.pr_body }}"
 
             echo 'target_pr_body<<EOF' >> $GITHUB_OUTPUT
             echo "$target_pr_body" >> $GITHUB_OUTPUT
