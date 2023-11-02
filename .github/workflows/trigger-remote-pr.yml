@@ -57,7 +57,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           path: main
-          branch: ${{ env.prBranchName }}
+          branch: ${{ format('{0}/{1}', env.targetRepository, env.prBranchName) }}
           delete-branch: true
           title: ${{ format('Dependency update. {0}', env.prTitle) }}
           body: ${{ format('{0} Dependency PR [{1}]({2}).', env.prBody, env.prNumber, env.prUrl) }}
@@ -66,8 +66,9 @@ jobs:
           prNumber: ${{ steps.PR.outputs.number }}
           prUrl: ${{ steps.PR.outputs.pr_url }}
           prTitle: ${{ steps.PR.outputs.pr_title }}
-          prBranchName: "$REPOSITORY_PATH"/${{ fromJson(steps.PR.outputs.pr).head.ref }}
+          prBranchName: ${{ format('{0}/{1}, fromJson(steps.PR.outputs.pr).head.ref }}
           prBody: ${{ steps.PR.outputs.pr_body }}
+          targetRepository: "$REPOSITORY_PATH"
 
 
       - name: "Check outputs"
@@ -75,4 +76,3 @@ jobs:
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
-
