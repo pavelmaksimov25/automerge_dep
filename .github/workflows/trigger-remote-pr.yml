@@ -9,7 +9,8 @@ jobs:
   trigger-external-pr:
     runs-on: ubuntu-latest
     env:
-        REPOSITORY_PATH: 'pavelmaksimov25/auto_merge_test_main'
+        OWNER: 'pavelmaksimov25'
+        REPO: 'auto_merge_test_main'
 
     steps:
       - name: "Checkout"
@@ -39,7 +40,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
-          repository: ${{ env.REPOSITORY_PATH }}
+          repository: ${{ env.OWNER }}/${{ env.REPO }}
           path: main
           fetch-depth: 0
 
@@ -50,23 +51,36 @@ jobs:
           composer dump-autoload
         working-directory: main
 
+      - name: "Prepare PR Body"
+        if: ${{ success() }}
+        id: target-pr-body
+        run: |
+            target_pr_body="This PR is automatically created by GitHub action to automatically update dependency.
+            *  Original PR [${{ steps.PR.outputs.number }}](${{ steps.PR.outputs.pr_url }})
+            *  Original PR Body:
+            *  ${{ steps.PR.outputs.pr_body }}"
+
+            echo 'target_pr_body<<EOF' >> $GITHUB_OUTPUT
+            echo "$target_pr_body" >> $GITHUB_OUTPUT
+            echo 'EOF' >> $GITHUB_OUTPUT
+
       - name: "Create Pull Request"
         id: cpr
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.PAT }}
           path: main
-          branch: ${{ format('{0}-deps-{1}', env.prBranchName, env.prNumber) }}
+          branch: ${{ format('{0}-dependency-{1}-{2}', env.prBranchName, env.sourceProject, env.prNumber) }}
           delete-branch: true
           title: ${{ format('Dependency update. {0}', env.prTitle) }}
-          body: ${{ format('{0} Dependency PR [{1}]({2}).', env.prBody, env.prNumber, env.prUrl) }}
+          body: ${{ env.prBody }}
           labels: dependencies
         env:
           prNumber: ${{ steps.PR.outputs.number }}
-          prUrl: ${{ steps.PR.outputs.pr_url }}
           prTitle: ${{ steps.PR.outputs.pr_title }}
           prBranchName: ${{ fromJson(steps.PR.outputs.pr).head.ref }}
-          prBody: ${{ steps.PR.outputs.pr_body }}
+          prBody: ${{ steps.target-pr-body.outputs.target_pr_body }}
+          sourceProject: ${{ env.REPO }}
 
 
       - name: "Check outputs"
