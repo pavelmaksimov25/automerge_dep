@@ -1,9 +1,6 @@
 name: Dependency update
 
 on:
-  workflow_run:
-    workflows: [CI]
-    types: [completed]
   pull_request:
     types: [closed]
   workflow_dispatch:
@@ -11,7 +8,7 @@ on:
 jobs:
   trigger-external-pr:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged == true && github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.pull_request.merged == true }}
     env:
       OWNER: 'pavelmaksimov25'
       REPO: 'auto_merge_test_main'
