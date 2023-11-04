@@ -4,11 +4,14 @@ on:
   workflow_run:
     workflows: [CI]
     types: [completed]
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
 
 jobs:
   trigger-external-pr:
-    if: ${{github.event.pull_request.merged == true }} && ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && github.event.workflow_run.conclusion == 'success'
     env:
       OWNER: 'pavelmaksimov25'
       REPO: 'auto_merge_test_main'
@@ -31,6 +34,10 @@ jobs:
         with:
             php-version: 8.2
             tools: composer:v2
+
+      - run: |
+            echo ${{ github.event.pull_request.merged }}
+            echo ${{ github.event.pull_request }}
 
         # https://github.com/marketplace/actions/get-current-pull-request
       - name: "Collect PR data"
