@@ -10,7 +10,6 @@ on:
 
 jobs:
   trigger-external-pr:
-    if: ${{ github.event_name == 'pull_request' }} && ${{ github.event.action == 'closed' }} && ${{ github.event.pull_request.merged == true }} && ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     env:
       OWNER: 'pavelmaksimov25'
@@ -30,6 +29,7 @@ jobs:
 #
         # https://github.com/marketplace/actions/setup-php-action
       - name: "Install PHP"
+        if: ${{ github.event_name == 'pull_request' }} && ${{ github.event.action == 'closed' }} && ${{ github.event.pull_request.merged == true }} && ${{ github.event.workflow_run.conclusion == 'success' }}
         uses: shivammathur/setup-php@2.27.0
         with:
             php-version: 8.2
