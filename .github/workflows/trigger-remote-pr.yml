@@ -10,7 +10,7 @@ on:
 
 jobs:
   trigger-external-pr:
-    if: ${{github.event.pull_request.merged == true }} && ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'pull_request' }} && ${{ github.event.action == 'closed' }} && ${{ github.event.pull_request.merged == true }} && ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     env:
       OWNER: 'pavelmaksimov25'
