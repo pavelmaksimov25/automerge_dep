@@ -1,53 +1,59 @@
 name: Dependency updated
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
 
 jobs:
   trigger-external-pr:
+    if: ${{github.event.pull_request.merged == true }} && ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     env:
-        OWNER: 'pavelmaksimov25'
-        REPO: 'auto_merge_test_main'
-        SOURCE_PACKAGE: 'pavelmaksimov25/auto_merge_test_dep'
+      OWNER: 'pavelmaksimov25'
+      REPO: 'auto_merge_test_main'
+      SOURCE_PACKAGE: 'pavelmaksimov25/auto_merge_test_dep'
+      TARGET_BRANCH: main
+      PR_LABELS: composer dependencies
+#      PR_ASSIGNEES: pavelmaksimov25,DmytroKlymanSpryker
+#      PR_REVIEWERS: pavelmaksimov25,DmytroKlymanSpryker
 
     steps:
-      - name: "Checkout"
-        uses: actions/checkout@v3
-        with:
-            fetch-depth: 0
+#        # https://github.com/marketplace/actions/checkout
+#      - name: "Checkout"
+#        uses: actions/checkout@v4
+#        with:
+#            fetch-depth: 0
+#
+#        # https://github.com/marketplace/actions/setup-php-action
+#      - name: "Install PHP"
+#        uses: shivammathur/setup-php@2.27.0
+#        with:
+#            php-version: 8.2
+#            tools: composer:v2
 
-      - name: "Setup PHP"
-        uses: shivammathur/setup-php@v2
-        with:
-            php-version: 8.2
-            tools: composer:v2
-
-      - uses: 8BitJonny/gh-get-current-pr@2.0.0
+        # https://github.com/marketplace/actions/get-current-pull-request
+      - name: "Collect PR data"
+        uses: 8BitJonny/gh-get-current-pr@2.2.0
         id: PR
         with:
             github-token: ${{ secrets.PAT }}
             sha: ${{ github.event.pull_request.head.sha }}
 
-      - name: "Get PR details"
-        run: echo "The PR number is ${prNumber}"
-        if: success() && steps.PR.outputs.number
-        env:
-          prNumber: ${{ steps.PR.outputs.number }}
-
+        # https://github.com/marketplace/actions/checkout
       - name: "Checkout target repository"
-        uses: actions/checkout@v3
+        if: ${{ success() }}
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT }}
           repository: ${{ env.OWNER }}/${{ env.REPO }}
           path: main
           fetch-depth: 0
 
-      - name: "Update composer"
+      - name: "Update composer dependency"
+        if: ${{ success() }}
         run: |
-          composer update "$SOURCE_PACKAGE" --no-install --lock
+            composer update ${{ env.SOURCE_PACKAGE }} --no-scripts --no-progress --no-install
         working-directory: main
 
       - name: "Prepare PR Body"
@@ -63,20 +69,21 @@ jobs:
             echo "$target_pr_body" >> $GITHUB_OUTPUT
             echo 'EOF' >> $GITHUB_OUTPUT
 
-      - name: "Create Pull Request"
-        id: cpr
-        uses: peter-evans/create-pull-request@v4
+        # https://github.com/marketplace/actions/create-pull-request
+      - name: "Commit, push and create pull request"
+        if: ${{ success() }}
+        uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT }}
           path: main
-          branch: ${{ format('{0}-dependency-{1}-{2}', env.prBranchName, env.sourceProject, env.prNumber) }}
+          base: ${{ env.TARGET_BRANCH }}
+          branch: ${{ format('{0}-dependency-{1}-{2}', fromJson(steps.PR.outputs.pr).head.ref, env.REPO, steps.PR.outputs.number) }}
+          branch-suffix: timestamp
+          title: ${{ format('Dependency update. {0}', steps.PR.outputs.pr_title) }}
+          body: ${{ steps.target-pr-body.outputs.target_pr_body }}
+          committer: SprykerReleaseBot <spryker-release-bot@spryker.com>
+          author: ${{ github.actor }} <${{ github.actor }}@example.test>
+          labels: ${{ env.PR_LABELS }}
           delete-branch: true
-          title: ${{ format('Dependency update. {0}', env.prTitle) }}
-          body: ${{ env.prBody }}
-          labels: dependencies
-        env:
-          prNumber: ${{ steps.PR.outputs.number }}
-          prTitle: ${{ steps.PR.outputs.pr_title }}
-          prBranchName: ${{ fromJson(steps.PR.outputs.pr).head.ref }}
-          prBody: ${{ steps.target-pr-body.outputs.target_pr_body }}
-          sourceProject: ${{ env.REPO }}
+#          assignees: ${{ env.PR_ASSIGNEES }}
+#          reviewers: ${{ env.PR_REVIEWERS }}
