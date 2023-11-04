@@ -11,6 +11,7 @@ on:
 jobs:
   trigger-external-pr:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && github.event.workflow_run.conclusion == 'success'
     env:
       OWNER: 'pavelmaksimov25'
       REPO: 'auto_merge_test_main'
@@ -29,11 +30,14 @@ jobs:
 #
         # https://github.com/marketplace/actions/setup-php-action
       - name: "Install PHP"
-        if: ${{ github.event_name == 'pull_request' }} && ${{ github.event.action == 'closed' }} && ${{ github.event.pull_request.merged == true }} && ${{ github.event.workflow_run.conclusion == 'success' }}
         uses: shivammathur/setup-php@2.27.0
         with:
             php-version: 8.2
             tools: composer:v2
+
+      - run: |
+            echo ${{ github.event.pull_request.merged }}
+            echo ${{ github.event.pull_request }}
 
         # https://github.com/marketplace/actions/get-current-pull-request
       - name: "Collect PR data"
