@@ -46,9 +46,8 @@ jobs:
 
       - name: "Update composer"
         run: |
-          composer install
-          composer require pavelmaksimov25/auto_merge_test_dep
-          echo 'test' >> README.md
+          composer update pavelmaksimov25/auto_merge_test_dep -n
+          echo 'test additional file' >> README.md
         working-directory: main
 
       - name: "Prepare PR Body"
@@ -81,10 +80,3 @@ jobs:
           prBranchName: ${{ fromJson(steps.PR.outputs.pr).head.ref }}
           prBody: ${{ steps.target-pr-body.outputs.target_pr_body }}
           sourceProject: ${{ env.REPO }}
-
-
-      - name: "Check outputs"
-        if: ${{ steps.cpr.outputs.pull-request-number }}
-        run: |
-          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
