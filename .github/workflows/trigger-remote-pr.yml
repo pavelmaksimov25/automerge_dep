@@ -46,9 +46,9 @@ jobs:
 
       - name: "Update composer"
         run: |
-          composer update
           composer install
-          composer dump-autoload
+          composer require pavelmaksimov25/auto_merge_test_dep
+          echo 'test' >> README.md
         working-directory: main
 
       - name: "Prepare PR Body"
