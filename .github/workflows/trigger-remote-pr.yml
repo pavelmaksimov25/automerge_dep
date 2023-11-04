@@ -11,6 +11,7 @@ jobs:
     env:
         OWNER: 'pavelmaksimov25'
         REPO: 'auto_merge_test_main'
+        SOURCE_PACKAGE: 'pavelmaksimov25/auto_merge_test_dep'
 
     steps:
       - name: "Checkout"
@@ -46,8 +47,7 @@ jobs:
 
       - name: "Update composer"
         run: |
-          composer update pavelmaksimov25/auto_merge_test_dep -n
-          echo 'test additional file' >> README.md
+          composer update "$SOURCE_PACKAGE" --no-install --lock
         working-directory: main
 
       - name: "Prepare PR Body"
